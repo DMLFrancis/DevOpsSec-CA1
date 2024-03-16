@@ -42,4 +42,10 @@ jobs:
     steps:
       - run:
           name: deploy-application
-          command: ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-171-27-16.eu-north-1.compute.amazonaws.com "rm -rf ~/DevOpsSec-CA1/;git clone https://github.com/DMLFrancis/DevOpsSec-CA1.git; source DevOpsSec-CA1/deploy.sh"
+          command: |
+            ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-171-27-16.eu-north-1.compute.amazonaws.com "\
+            export SERVER=\"$SERVER\"; \
+            export PRIVATE_KEY=\"$PRIVATE_KEY\"; \
+            rm -rf ~/DevOpsSec-CA1/; \
+            git clone https://github.com/DMLFrancis/DevOpsSec-CA1.git; \
+            source DevOpsSec-CA1/deploy.sh"
