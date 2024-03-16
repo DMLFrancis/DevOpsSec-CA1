@@ -9,10 +9,17 @@ workflows:
             branches:
               only:
                 - main
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - build
 
 jobs:
   build:
-    working_directory: C:\Users\dmlfr\OneDrive\Desktop\DevOpsSec CA Pipeline\Simple Application\SimpleApplication
+    working_directory: ~/SimpleApplication
     docker:
       - image: circleci/node:10.16.3
     steps:
@@ -25,10 +32,14 @@ jobs:
       - run:
           name: install-npm
           command: npm install
-      - run:
-          name: test-run
-          command: npm run test
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
+  deploy:
+    docker:
+      - image: circleci/node:10.16.3
+    steps:
+      - run:
+          name: deploy-application
+          command: ssh -o StrictHostKeyChecking=no ubuntu@ec2-13-48-148-164.eu-north-1.compute.amazonaws.com "rm -rf ~/ExampleApplicationNew/;git clone https://github.com/DMLFrancis/ExampleApplicationNew.git; source ExampleApplicationNew/deploy.sh"
